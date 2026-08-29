@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Armelle Vicky M. — Développeuse Full Stack</title>
+<style>
+  :root {
+    --pcb: #0A2818;
+    --pcb-dark: #071C10;
+    --pcb-panel: #0E3320;
+    --copper: #C87F3D;
+    --gold: #E8B04D;
+    --solder: #7FA88C;
+    --text: #EDE7D9;
+    --text-soft: #8FAF9B;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Liberation Sans', Arial, sans-serif;
+    background: var(--pcb);
+    color: var(--text);
+  }
+  .mono { font-family: 'Liberation Mono', monospace; }
+  .grad-text {
+    background: linear-gradient(90deg, var(--copper), var(--gold));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  /* circuit trace background, reused on several sections */
+  .traces {
+    position:absolute; inset:0; pointer-events:none; opacity:0.5;
+  }
+
+  header {
+    position: sticky; top:0; z-index: 50;
+    background: rgba(7,28,16,0.94); backdrop-filter: blur(6px);
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 14px 22px; border-bottom: 1px solid rgba(200,127,61,0.25);
+  }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:700; font-size:16px; letter-spacing:0.5px; }
+  .chip-badge { width:36px; height:36px; }
+  .brand .tag { font-size:16px; }
+  .brand .tag b { color: var(--gold); font-weight:800; }
+  .header-right { display:flex; align-items:center; gap:10px; }
+  .lang-toggle { display:flex; background: rgba(237,231,217,0.06); border:1px solid rgba(200,127,61,0.3); border-radius:20px; padding:3px; gap:2px; }
+  .lang-btn { border:none; background:transparent; color: var(--text-soft); padding:6px 12px; border-radius:16px; font-size:12px; font-weight:700; cursor:pointer; font-family:'Liberation Mono',monospace; }
+  .lang-btn.active { background: linear-gradient(90deg, var(--copper), var(--gold)); color: var(--pcb-dark); }
+  .call-btn {
+    background: linear-gradient(90deg, var(--copper), var(--gold));
+    color: var(--pcb-dark); padding: 9px 15px; border-radius: 20px; text-decoration:none;
+    font-size: 12.5px; font-weight: 800; white-space: nowrap;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    padding: 60px 22px 54px; text-align:center; position:relative; overflow:hidden;
+    background: radial-gradient(ellipse at 50% -10%, var(--pcb-panel) 0%, var(--pcb) 55%, var(--pcb-dark) 100%);
+  }
+  .hero-eyebrow { color: var(--gold); font-family:'Liberation Mono',monospace; font-size:12px; letter-spacing:4px; font-weight:700; margin-bottom:22px; text-transform:uppercase; position:relative; }
+  .hero-eyebrow::before, .hero-eyebrow::after { content:"◆"; color: var(--copper); margin:0 10px; font-size:8px; vertical-align:middle; }
+  .hero h1 { font-size: clamp(30px,6vw,48px); font-weight:800; line-height:1.16; position:relative; }
+  .hero p.sub { color: var(--text-soft); font-size:16px; margin-top:18px; max-width:500px; margin-left:auto; margin-right:auto; position:relative; }
+  .hero-ctas { margin-top:32px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; position:relative; }
+  .btn-primary, .btn-ghost {
+    padding:14px 26px; border-radius:8px; font-size:15px; font-weight:700; text-decoration:none; cursor:pointer; border:none; display:inline-block;
+  }
+  .btn-primary { background: linear-gradient(90deg, var(--copper), var(--gold)); color: var(--pcb-dark); clip-path: polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px); }
+  .btn-ghost { background: transparent; color: var(--text); border:1.5px solid rgba(200,127,61,0.45); }
+
+  section { padding: 54px 22px; position:relative; }
+  .section-inner { max-width: 980px; margin:0 auto; position:relative; }
+  .section-title { font-size: clamp(23px,4vw,29px); font-weight:800; margin-bottom:6px; text-align:center; }
+  .section-rule { width:70px; height:2px; background: linear-gradient(90deg, var(--copper), var(--gold)); margin: 0 auto 34px; position:relative; }
+  .section-rule::before, .section-rule::after { content:""; position:absolute; top:-3px; width:8px; height:8px; border-radius:50%; background: var(--gold); }
+  .section-rule::before { left:-4px; } .section-rule::after { right:-4px; }
+
+  /* ---------- SERVICES : chip-style cards linked by traces ---------- */
+  .services-grid { display:grid; grid-template-columns:1fr; gap:22px; position:relative; }
+  @media (min-width:760px) { .services-grid { grid-template-columns: repeat(4,1fr); } }
+  .service-card {
+    background: var(--pcb-panel); border:1px solid rgba(200,127,61,0.3); border-radius:4px;
+    padding:28px 18px 22px; text-align:center; position:relative;
+  }
+  .service-card::before, .service-card::after {
+    content:""; position:absolute; width:10px; height:2px; background: var(--copper);
+  }
+  .service-card::before { top:14px; left:-10px; }
+  .service-card::after { top:14px; right:-10px; }
+  .chip-icon { width:52px; height:52px; margin:0 auto 16px; }
+  .service-card h3 { font-size:16px; margin-bottom:4px; }
+  .service-card .en { font-family:'Liberation Mono',monospace; font-size:11px; color: var(--gold); margin-bottom:10px; letter-spacing:1px; }
+  .service-card p { font-size:13.5px; color: var(--text-soft); line-height:1.5; }
+
+  .tech-row { display:flex; flex-wrap:wrap; gap:9px; justify-content:center; margin-top: 8px;}
+  .tech-pill { font-family:'Liberation Mono',monospace; background: var(--pcb-panel); border:1px solid rgba(200,127,61,0.3); border-radius:3px; padding:7px 13px; font-size:12px; color: var(--text-soft); }
+
+  /* ---------- CONTACT ---------- */
+  .contact { background: var(--pcb-dark); }
+  .contact-grid { display:grid; grid-template-columns:1fr; gap:30px; }
+  @media (min-width:820px) { .contact-grid { grid-template-columns: 1fr 1fr; } }
+
+  .channel-buttons { display:flex; flex-direction:column; gap:14px; }
+  .channel-btn {
+    display:flex; align-items:center; gap:14px; padding:16px 18px; border-radius:4px;
+    text-decoration:none; color: var(--text); border:1px solid rgba(200,127,61,0.3);
+    background: var(--pcb-panel); position:relative;
+  }
+  .channel-btn::before { content:""; position:absolute; left:-1px; top:14px; bottom:14px; width:3px; background: linear-gradient(180deg, var(--copper), var(--gold)); }
+  .channel-btn .ico { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; border:2px solid var(--gold); }
+  .channel-btn .label { font-family:'Liberation Mono',monospace; font-size:10.5px; letter-spacing:1.5px; color: var(--gold); text-transform:uppercase; }
+  .channel-btn .value { font-size:15px; font-weight:700; margin-top:2px; }
+
+  .form-wrap { background: var(--pcb-panel); border:1px solid rgba(200,127,61,0.3); border-radius:6px; padding:26px; }
+  .field { margin-bottom:16px; }
+  .field label { display:block; font-family:'Liberation Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color: var(--gold); margin-bottom:6px; }
+  .field input, .field textarea {
+    width:100%; padding:12px 14px; border-radius:4px; border:1px solid rgba(200,127,61,0.35);
+    background: rgba(237,231,217,0.04); color: var(--text); font-size:15px; font-family:inherit;
+  }
+  .field textarea { min-height:100px; resize:vertical; }
+  .field input::placeholder, .field textarea::placeholder { color: rgba(237,231,217,0.35); }
+  .submit-btn {
+    width:100%; background: linear-gradient(90deg, var(--copper), var(--gold)); color: var(--pcb-dark); border:none;
+    padding:14px; border-radius:4px; font-weight:800; font-size:15px; cursor:pointer;
+  }
+  .form-note { font-size:11.5px; color: var(--text-soft); margin-top:10px; text-align:center; font-family:'Liberation Mono',monospace; }
+
+  footer { background: var(--pcb-dark); text-align:center; padding:22px; font-size:12px; color: var(--text-soft); border-top:1px solid rgba(200,127,61,0.15); font-family:'Liberation Mono',monospace; }
+
+  .demo-badge {
+    position: fixed; bottom:16px; right:16px; background: linear-gradient(90deg, var(--copper), var(--gold));
+    color: var(--pcb-dark); padding:8px 14px; border-radius:4px; font-size:11.5px; font-weight:700; z-index:100;
+    box-shadow:0 4px 12px rgba(0,0,0,0.4); font-family:'Liberation Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <svg class="chip-badge" viewBox="0 0 48 48"><rect x="12" y="12" width="24" height="24" rx="2" fill="none" stroke="#E8B04D" stroke-width="2"/><rect x="18" y="18" width="12" height="12" rx="1" fill="#E8B04D" opacity="0.85"/><g stroke="#C87F3D" stroke-width="2"><line x1="16" y1="4" x2="16" y2="12"/><line x1="24" y1="4" x2="24" y2="12"/><line x1="32" y1="4" x2="32" y2="12"/><line x1="16" y1="36" x2="16" y2="44"/><line x1="24" y1="36" x2="24" y2="44"/><line x1="32" y1="36" x2="32" y2="44"/><line x1="4" y1="16" x2="12" y2="16"/><line x1="4" y1="24" x2="12" y2="24"/><line x1="4" y1="32" x2="12" y2="32"/><line x1="36" y1="16" x2="44" y2="16"/><line x1="36" y1="24" x2="44" y2="24"/><line x1="36" y1="32" x2="44" y2="32"/></g></svg>
+      <span class="tag mono">FULL<b>STACK</b></span>
+    </div>
+    <div class="header-right">
+      <div class="lang-toggle">
+        <button class="lang-btn active" id="btn-fr" onclick="setLang('fr')">FR</button>
+        <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      </div>
+      <a class="call-btn" href="tel:+24177580213" data-fr="📞 Appeler" data-en="📞 Call">📞 Appeler</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-eyebrow" data-fr="Développeuse Full Stack" data-en="Full Stack Developer">Développeuse Full Stack</div>
+    <h1 data-fr='Je crée des <span class="grad-text">solutions digitales</span><br>modernes &amp; performantes' data-en='I build modern &amp; <span class="grad-text">powerful digital</span><br>solutions'>Je crée des <span class="grad-text">solutions digitales</span><br>modernes &amp; performantes</h1>
+    <p class="sub" data-fr="Des projets sur mesure pour développer votre succès." data-en="Custom projects designed to grow your business.">Des projets sur mesure pour développer votre succès.</p>
+    <div class="hero-ctas">
+      <a class="btn-primary" href="#contact" data-fr="Demander une consultation" data-en="Request a consultation">Demander une consultation</a>
+      <a class="btn-ghost" href="#services" data-fr="Voir ce que je fais" data-en="See what I do">Voir ce que je fais</a>
+    </div>
+  </section>
+
+  <section id="services">
+    <div class="section-inner">
+      <div class="section-title" data-fr="Ce que je fais" data-en="What I do">Ce que je fais</div>
+      <div class="section-rule"></div>
+      <div class="services-grid">
+        <div class="service-card">
+          <svg class="chip-icon" viewBox="0 0 48 48"><polygon points="24,4 40,14 40,34 24,44 8,34 8,14" fill="none" stroke="#E8B04D" stroke-width="2"/><circle cx="24" cy="24" r="9" fill="none" stroke="#C87F3D" stroke-width="2"/><circle cx="24" cy="24" r="3" fill="#E8B04D"/></svg>
+          <h3 data-fr="Sites Web" data-en="Websites">Sites Web</h3>
+          <p data-fr="Sites vitrines, corporate, e-commerce et plus." data-en="Business, portfolio, e-commerce and more.">Sites vitrines, corporate, e-commerce et plus.</p>
+        </div>
+        <div class="service-card">
+          <svg class="chip-icon" viewBox="0 0 48 48"><polygon points="24,4 40,14 40,34 24,44 8,34 8,14" fill="none" stroke="#E8B04D" stroke-width="2"/><rect x="17" y="14" width="14" height="20" rx="2" fill="none" stroke="#C87F3D" stroke-width="2"/><line x1="21" y1="30" x2="27" y2="30" stroke="#E8B04D" stroke-width="2"/></svg>
+          <h3 data-fr="Applications" data-en="Applications">Applications</h3>
+          <p data-fr="Applications web et mobiles sur mesure." data-en="Custom web and mobile applications.">Applications web et mobiles sur mesure.</p>
+        </div>
+        <div class="service-card">
+          <svg class="chip-icon" viewBox="0 0 48 48"><polygon points="24,4 40,14 40,34 24,44 8,34 8,14" fill="none" stroke="#E8B04D" stroke-width="2"/><path d="M18 17l-6 7 6 7M30 17l6 7-6 7" fill="none" stroke="#C87F3D" stroke-width="2"/></svg>
+          <h3 data-fr="Développement" data-en="Development">Développement</h3>
+          <p data-fr="Code propre, sécurisé et évolutif." data-en="Clean, secure and scalable code.">Code propre, sécurisé et évolutif.</p>
+        </div>
+        <div class="service-card">
+          <svg class="chip-icon" viewBox="0 0 48 48"><polygon points="24,4 40,14 40,34 24,44 8,34 8,14" fill="none" stroke="#E8B04D" stroke-width="2"/><path d="M24 13l4 8 8 1-6 6 1.5 8L24 32l-7.5 4L18 28l-6-6 8-1z" fill="#E8B04D" opacity="0.9"/></svg>
+          <h3 data-fr="Accompagnement" data-en="Support">Accompagnement</h3>
+          <p data-fr="Suivi, maintenance et conseils continus." data-en="Ongoing support, maintenance and advice.">Suivi, maintenance et conseils continus.</p>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:44px; color:var(--gold); letter-spacing:3px; font-size:12px; font-weight:700; font-family:'Liberation Mono',monospace;">// TECHNOLOGIES</div>
+      <div class="tech-row" style="margin-top:16px;">
+        <span class="tech-pill">HTML</span><span class="tech-pill">CSS</span><span class="tech-pill">JavaScript</span>
+        <span class="tech-pill">React</span><span class="tech-pill">Next.js</span><span class="tech-pill">Node.js</span>
+        <span class="tech-pill">Express</span><span class="tech-pill">MongoDB</span><span class="tech-pill">PostgreSQL</span><span class="tech-pill">Docker</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="section-inner">
+      <div class="section-title" data-fr="Demander un service" data-en="Request a service">Demander un service</div>
+      <div class="section-rule"></div>
+      <div class="contact-grid">
+
+        <div class="channel-buttons">
+          <a class="channel-btn" href="https://wa.me/24177580213" target="_blank">
+            <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="#E8B04D"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-1-.3-.1-.5-.1-.6.1-.2.3-.7 1-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.5-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.2-.5.1-.2 0-.4 0-.5C10 9.8 9.5 8.5 9.3 8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3 4.8 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.3-.1-.1-.3-.2-.5-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.7 3 1.1 4.8 1.1 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3.1.8.8-3-.2-.3C4 14.9 3.6 13.5 3.6 12c0-4.6 3.8-8.4 8.4-8.4s8.4 3.8 8.4 8.4-3.8 8-8.4 8z"/></svg></div>
+            <div><div class="label">WhatsApp</div><div class="value">+241 077 580 213</div></div>
+          </a>
+          <a class="channel-btn" href="tel:+24177580213">
+            <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8B04D" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.4 2.1L8.1 9.6a16 16 0 0 0 6 6l1.1-1.2a2 2 0 0 1 2.1-.4c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.9 2z"/></svg></div>
+            <div><div class="label" data-fr="Appel direct" data-en="Direct call">Appel direct</div><div class="value">+241 077 580 213</div></div>
+          </a>
+          <a class="channel-btn" href="mailto:momboarmellevicky@gmail.com">
+            <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8B04D" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 6 10-6"/></svg></div>
+            <div><div class="label">E-mail</div><div class="value">momboarmellevicky@gmail.com</div></div>
+          </a>
+        </div>
+
+        <div class="form-wrap">
+          <form id="reqForm">
+            <div class="field">
+              <label data-fr="Nom complet" data-en="Full name">Nom complet</label>
+              <input type="text" id="r-name" data-fr-ph="Votre nom" data-en-ph="Your name" placeholder="Votre nom" required>
+            </div>
+            <div class="field">
+              <label data-fr="E-mail ou WhatsApp" data-en="Email or WhatsApp">E-mail ou WhatsApp</label>
+              <input type="text" id="r-contact" data-fr-ph="Votre email ou numéro" data-en-ph="Your email or number" placeholder="Votre email ou numéro" required>
+            </div>
+            <div class="field">
+              <label data-fr="Votre projet / besoin" data-en="Your project / need">Votre projet / besoin</label>
+              <textarea id="r-need" data-fr-ph="Décrivez ce que vous voulez faire réaliser..." data-en-ph="Describe what you'd like to have built..." placeholder="Décrivez ce que vous voulez faire réaliser..."></textarea>
+            </div>
+            <button type="submit" class="submit-btn" data-fr="Envoyer ma demande" data-en="Send my request">Envoyer ma demande</button>
+            <p class="form-note" data-fr="// envoie votre demande directement par e-mail" data-en="// sends your request directly by email">// envoie votre demande directement par e-mail</p>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer>© 2026 <span data-fr="Armelle Vicky M. — Développeuse Full Stack, Libreville, Gabon" data-en="Armelle Vicky M. — Full Stack Developer, Libreville, Gabon">Armelle Vicky M. — Développeuse Full Stack, Libreville, Gabon</span></footer>
+  <div class="demo-badge" data-fr="Page fonctionnelle — prête à intégrer" data-en="Functional page — ready to integrate">Page fonctionnelle — prête à intégrer</div>
+
+<script>
+  function setLang(lang) {
+    document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.querySelectorAll('[data-fr]').forEach(el => {
+      const text = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-fr');
+      if (text !== null) el.innerHTML = text;
+    });
+    document.querySelectorAll('[data-fr-ph]').forEach(el => {
+      const ph = lang === 'en' ? el.getAttribute('data-en-ph') : el.getAttribute('data-fr-ph');
+      if (ph !== null) el.setAttribute('placeholder', ph);
+    });
+    document.documentElement.lang = lang;
+  }
+
+  document.getElementById('reqForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name = document.getElementById('r-name').value;
+    const contact = document.getElementById('r-contact').value;
+    const need = document.getElementById('r-need').value;
+    const subject = encodeURIComponent('Demande de service — ' + name);
+    const body = encodeURIComponent(
+      'Nom : ' + name + '\n' +
+      'Contact : ' + contact + '\n\n' +
+      'Besoin :\n' + need
+    );
+    window.location.href = 'mailto:momboarmellevicky@gmail.com?subject=' + subject + '&body=' + body;
+  });
+</script>
+
+</body>
+</html>
