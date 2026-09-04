@@ -243,29 +243,97 @@
       </div>
     </div>
   </section>
+<style>
+  .proj-card{position:relative;overflow:hidden;cursor:pointer;}
+  .proj-card img{width:52px;height:52px;border-radius:10px;margin:0 auto 16px;object-fit:cover;display:block;}
+  .proj-card video{
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    object-fit:cover;border-radius:4px;opacity:0;transition:opacity .3s;
+    pointer-events:none;background:var(--pcb-panel);
+  }
+  .proj-card.playing video{opacity:1;}
+  .proj-card.playing img{opacity:0;}
+  .proj-card .play-hint{
+    position:absolute;bottom:8px;right:8px;background:rgba(7,28,16,0.75);
+    color:var(--gold);font-size:10.5px;padding:3px 8px;border-radius:12px;
+    font-family:'Liberation Mono',monospace;
+  }
+  .proj-card.playing .play-hint{display:none;}
+  .showcase{background:var(--pcb-panel);border-radius:6px;padding:24px 18px;margin-top:30px;}
+  .showcase-kpis{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0;}
+  .kpi{background:var(--pcb-dark);border:1px solid rgba(200,127,61,0.3);border-radius:4px;
+    padding:8px 14px;text-align:center;font-family:'Liberation Mono',monospace;}
+  .kpi b{display:block;color:var(--gold);font-size:16px;}
+  .kpi span{font-size:10px;color:var(--text-soft);}
+  .phone-frame{
+    width:220px;height:440px;margin:20px auto 0;border:8px solid var(--pcb-dark);
+    border-radius:28px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.4);
+  }
+  .phone-frame iframe{width:100%;height:100%;border:none;}
+</style>
+
 <section id="projets">
   <div class="section-inner">
     <div class="section-title" data-fr="Mes projets" data-en="My projects">Mes projets</div>
     <div class="section-rule"></div>
     <div class="services-grid">
-      <div class="service-card">
-        <img src="ghulabe.jpg" alt="GHULABE" style="width:52px;height:52px;border-radius:10px;margin:0 auto 16px;object-fit:cover;display:block;">
+      <div class="service-card proj-card" data-video="ghulabe-demo.mp4">
+        <img src="ghulabe.jpg" alt="GHULABE">
+        <video muted loop playsinline preload="none"></video>
+        <span class="play-hint">▶ Aperçu</span>
         <h3>GHULABE</h3>
         <p data-fr="Plateforme SaaS d'audit cybersécurité pour PME africaines." data-en="Cybersecurity audit SaaS platform for African SMEs.">Plateforme SaaS d'audit cybersécurité pour PME africaines.</p>
       </div>
-      <div class="service-card">
-        <img src="menu.png" alt="MÉNU" style="width:52px;height:52px;margin:0 auto 16px;object-fit:contain;display:block;">
+      <div class="service-card proj-card" data-video="menu-demo.mp4">
+        <img src="menu.png" alt="MÉNU" style="object-fit:contain;">
+        <video muted loop playsinline preload="none"></video>
+        <span class="play-hint">▶ Aperçu</span>
         <h3>MÉNU</h3>
         <p data-fr="Générateur d'applications no-code propulsé par plusieurs IA." data-en="Multi-AI powered no-code app generator.">Générateur d'applications no-code propulsé par plusieurs IA.</p>
       </div>
-      <div class="service-card">
-        <img src="yhulu.png" alt="Yhulu" style="width:100px;height:52px;margin:0 auto 16px;object-fit:contain;display:block;">
+      <div class="service-card proj-card" data-video="yhulu-demo.mp4">
+        <img src="yhulu.png" alt="Yhulu" style="width:100px;object-fit:contain;">
+        <video muted loop playsinline preload="none"></video>
+        <span class="play-hint">▶ Aperçu</span>
         <h3>Yhulu</h3>
         <p data-fr="Application Android de vidéos courtes." data-en="Short-form video Android app.">Application Android de vidéos courtes.</p>
       </div>
     </div>
   </div>
+
+  <div class="showcase">
+    <div class="section-title" data-fr="Cas d'étude express" data-en="Quick case study">Cas d'étude express</div>
+    <div class="showcase-kpis">
+      <div class="kpi"><b>&lt;1s</b><span>Chargement</span></div>
+      <div class="kpi"><b>100%</b><span>Responsive</span></div>
+      <div class="kpi"><b>SEO</b><span>Optimisé</span></div>
+    </div>
+    <div class="phone-frame">
+      <iframe src="https://momboarmellevicky-droid.github.io/fullstack-services/"></iframe>
+    </div>
+  </div>
 </section>
+
+<script>
+document.querySelectorAll('.proj-card').forEach(card => {
+  const video = card.querySelector('video');
+  const src = card.dataset.video;
+  card.addEventListener('click', () => {
+    if (!video.src) video.src = src;
+    if (card.classList.contains('playing')) {
+      video.pause();
+      card.classList.remove('playing');
+    } else {
+      document.querySelectorAll('.proj-card.playing').forEach(c => {
+        c.classList.remove('playing');
+        c.querySelector('video').pause();
+      });
+      card.classList.add('playing');
+      video.play();
+    }
+  });
+});
+</script>
   <footer>© 2026 <span data-fr="Armelle Vicky M. — Développeuse Full Stack, Libreville, Gabon" data-en="Armelle Vicky M. — Full Stack Developer, Libreville, Gabon">Armelle Vicky M. — Développeuse Full Stack, Libreville, Gabon</span></footer>
   <div class="demo-badge" data-fr="Page fonctionnelle — prête à intégrer" data-en="Functional page — ready to integrate">Page fonctionnelle — prête à intégrer</div>
 
